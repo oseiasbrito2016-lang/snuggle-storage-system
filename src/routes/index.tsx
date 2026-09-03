@@ -56,6 +56,7 @@ const SOCIAIS = [
 const NAV = [
   { label: "Início", href: "#inicio" },
   { label: "Sobre", href: "#sobre" },
+  { label: "Credenciais", href: "#credenciais" },
   { label: "Atuação", href: "#atuacao" },
   { label: "Depoimentos", href: "#depoimentos" },
   { label: "Dúvidas", href: "#faq" },
