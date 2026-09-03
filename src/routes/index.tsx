@@ -189,14 +189,24 @@ function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-graphite/95 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
-        <a href="#inicio" className="leading-none">
-          <span className="block font-display text-xl tracking-[0.28em] text-white">
-            RAFAEL ALMEIDA
-          </span>
-          <span className="mt-1 block text-[10px] tracking-[0.42em] text-terracotta-soft">
-            ADVOCACIA
+        <a href="#inicio" className="flex items-center gap-3 leading-none">
+          <img
+            src={logoRA}
+            alt="Monograma RA — Rafael Almeida Advocacia"
+            width={1024}
+            height={1024}
+            className="h-10 w-10 flex-none object-contain"
+          />
+          <span>
+            <span className="block font-display text-xl tracking-[0.28em] text-white">
+              RAFAEL ALMEIDA
+            </span>
+            <span className="mt-1 block text-[10px] tracking-[0.42em] text-terracotta-soft">
+              ADVOCACIA
+            </span>
           </span>
         </a>
+
 
         <nav className="hidden items-center gap-8 lg:flex">
           {NAV.map((i) => (
