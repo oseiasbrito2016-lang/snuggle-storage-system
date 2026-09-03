@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import heroPhoto from "@/assets/rafael-hero.jpg";
 import sobrePhoto from "@/assets/rafael-sobre.jpg";
+import logoRA from "@/assets/logo-ra.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
