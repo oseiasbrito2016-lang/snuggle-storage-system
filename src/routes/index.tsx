@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
+  BookOpen,
   Briefcase,
+  GraduationCap,
+  Users,
   ChevronDown,
   FileSignature,
   MessageCircle,
@@ -53,6 +56,7 @@ const SOCIAIS = [
 const NAV = [
   { label: "Início", href: "#inicio" },
   { label: "Sobre", href: "#sobre" },
+  { label: "Credenciais", href: "#credenciais" },
   { label: "Atuação", href: "#atuacao" },
   { label: "Depoimentos", href: "#depoimentos" },
   { label: "Dúvidas", href: "#faq" },
@@ -428,6 +432,84 @@ function Sobre() {
     </section>
   );
 }
+
+function Credenciais() {
+  const itens = [
+    {
+      icon: GraduationCap,
+      t: "Pós-graduação em Direito Empresarial",
+      d: "Faculdade de Direito de Salvador (fictícia), com ênfase em direito societário e contratos.",
+    },
+    {
+      icon: BookOpen,
+      t: "Extensão em Contratos e Responsabilidade Civil",
+      d: "Curso de atualização voltado à elaboração e revisão de instrumentos contratuais.",
+    },
+    {
+      icon: ScrollText,
+      t: "Membro de comissão da OAB/BA",
+      d: "Participação na Comissão de Direito Empresarial da subseção de Vitória da Conquista.",
+    },
+    {
+      icon: Users,
+      t: "Palestras e aulas",
+      d: "Encontros informativos sobre prevenção de litígios para pequenos empreendedores.",
+    },
+    {
+      icon: FileSignature,
+      t: "Produção de conteúdo jurídico",
+      d: "Artigos informativos sobre temas de direito civil e empresarial.",
+    },
+  ];
+  return (
+    <section id="credenciais" className="bg-sand py-24 lg:py-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        <Reveal className="max-w-3xl">
+          <SectionLabel>FORMAÇÃO E CREDENCIAIS</SectionLabel>
+          <h2 className="font-display text-4xl leading-tight text-graphite lg:text-5xl">
+            Currículo profissional
+          </h2>
+          <p className="mt-6 leading-relaxed text-muted-foreground">
+            Graduado em Direito pela Universidade Federal da Bahia, pós-graduado em Direito
+            Empresarial, inscrito na OAB/BA sob o nº 00.000.
+          </p>
+        </Reveal>
+
+        <div className="mt-14 grid gap-px border border-border bg-border md:grid-cols-2">
+          {itens.map((i, idx) => {
+            const Icon = i.icon;
+            return (
+              <Reveal key={i.t} delay={idx * 110}>
+                <div className="group h-full bg-background px-8 py-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-24px_rgba(26,26,26,0.45)]">
+                  <Icon
+                    className="h-6 w-6 text-terracotta transition-transform duration-300 group-hover:scale-110"
+                    strokeWidth={1.4}
+                  />
+                  <h3 className="mt-5 font-display text-xl text-graphite">{i.t}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{i.d}</p>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+
+        <Reveal delay={140}>
+          <blockquote className="mt-14 border-l-2 border-terracotta bg-background px-8 py-10 lg:px-12">
+            <p className="font-display text-2xl leading-relaxed text-graphite lg:text-3xl">
+              “Procuro compreender o contexto de cada cliente antes de indicar caminhos jurídicos,
+              explicando com clareza as alternativas e os riscos envolvidos.”
+            </p>
+            <footer className="mt-6 text-xs tracking-[0.25em] text-muted-foreground">
+              DR. RAFAEL ALMEIDA — OAB/BA 00.000
+            </footer>
+          </blockquote>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+
 
 function Atuacao() {
   const areas = [
@@ -1066,6 +1148,8 @@ function Home() {
         <Hero />
         <Numeros />
         <Sobre />
+        <Credenciais />
+
         <Atuacao />
         <CtaCaso />
         <Diferenciais />
