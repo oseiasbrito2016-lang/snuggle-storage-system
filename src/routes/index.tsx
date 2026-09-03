@@ -13,6 +13,8 @@ import {
   Compass,
   Handshake,
   Sparkles,
+  Instagram,
+  Linkedin,
 } from "lucide-react";
 import heroPhoto from "@/assets/rafael-hero.jpg";
 import sobrePhoto from "@/assets/rafael-sobre.jpg";
