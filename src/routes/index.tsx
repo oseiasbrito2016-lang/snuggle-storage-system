@@ -60,6 +60,33 @@ const NAV = [
 
 /* ---------------- animation helpers ---------------- */
 
+/**
+ * Um único IntersectionObserver compartilhado por toda a página:
+ * evita criar dezenas de observers e dispara cada elemento uma só vez.
+ */
+type RevealCb = () => void;
+const revealCallbacks = new WeakMap<Element, RevealCb>();
+let sharedObserver: IntersectionObserver | null = null;
+
+function getObserver() {
+  if (typeof window === "undefined") return null;
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          sharedObserver?.unobserve(e.target);
+          const cb = revealCallbacks.get(e.target);
+          revealCallbacks.delete(e.target);
+          cb?.();
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
+    );
+  }
+  return sharedObserver;
+}
+
 function useInView<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
   const [visible, setVisible] = useState(false);
@@ -67,19 +94,17 @@ function useInView<T extends HTMLElement>() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setVisible(true);
-            obs.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
-    );
+    const obs = getObserver();
+    if (!obs) {
+      setVisible(true);
+      return;
+    }
+    revealCallbacks.set(el, () => setVisible(true));
     obs.observe(el);
-    return () => obs.disconnect();
+    return () => {
+      revealCallbacks.delete(el);
+      obs.unobserve(el);
+    };
   }, []);
 
   return { ref, visible };
@@ -95,17 +120,27 @@ function Reveal({
   className?: string;
 }) {
   const { ref, visible } = useInView<HTMLDivElement>();
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!visible || done) return;
+    const t = window.setTimeout(() => setDone(true), delay + 900);
+    return () => window.clearTimeout(t);
+  }, [visible, done, delay]);
+
   return (
     <div
       ref={ref}
       data-visible={visible}
-      style={{ transitionDelay: `${delay}ms` }}
+      data-done={done || undefined}
+      style={done ? undefined : { transitionDelay: `${delay}ms` }}
       className={`reveal ${className}`}
     >
       {children}
     </div>
   );
 }
+
 
 function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
   const { ref, visible } = useInView<HTMLSpanElement>();
