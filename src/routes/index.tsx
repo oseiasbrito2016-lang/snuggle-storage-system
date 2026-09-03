@@ -743,6 +743,91 @@ function Frase() {
   );
 }
 
+function ContatoForm() {
+  const [sent, setSent] = useState(false);
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        setSent(true);
+      }}
+      className="space-y-5"
+    >
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="block">
+          <span className="text-[11px] tracking-[0.28em] text-white/40">NOME</span>
+          <input
+            required
+            name="nome"
+            type="text"
+            className="mt-2 w-full border-b border-white/15 bg-transparent py-3 text-white outline-none transition-colors focus:border-terracotta"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] tracking-[0.28em] text-white/40">E-MAIL</span>
+          <input
+            required
+            name="email"
+            type="email"
+            className="mt-2 w-full border-b border-white/15 bg-transparent py-3 text-white outline-none transition-colors focus:border-terracotta"
+          />
+        </label>
+      </div>
+      <label className="block">
+        <span className="text-[11px] tracking-[0.28em] text-white/40">TELEFONE (OPCIONAL)</span>
+        <input
+          name="telefone"
+          type="tel"
+          className="mt-2 w-full border-b border-white/15 bg-transparent py-3 text-white outline-none transition-colors focus:border-terracotta"
+        />
+      </label>
+      <label className="block">
+        <span className="text-[11px] tracking-[0.28em] text-white/40">
+          DESCRIÇÃO BREVE DO CASO
+        </span>
+        <textarea
+          required
+          name="mensagem"
+          rows={4}
+          className="mt-2 w-full resize-none border-b border-white/15 bg-transparent py-3 text-white outline-none transition-colors focus:border-terracotta"
+        />
+      </label>
+
+      <label className="flex items-start gap-3 pt-1">
+        <input
+          required
+          type="checkbox"
+          name="consentimento"
+          className="mt-1 h-4 w-4 flex-none accent-[var(--terracotta)]"
+        />
+        <span className="text-xs leading-relaxed text-white/50">
+          Concordo com o tratamento dos meus dados de acordo com a{" "}
+          <Link
+            to="/politica-de-privacidade"
+            className="text-terracotta-soft underline underline-offset-4"
+          >
+            Política de Privacidade
+          </Link>
+          , conforme a LGPD.
+        </span>
+      </label>
+
+      <button
+        type="submit"
+        className="w-full border border-terracotta px-10 py-4 text-[12px] tracking-[0.2em] text-terracotta-soft transition-colors duration-300 hover:bg-terracotta hover:text-white sm:w-auto"
+      >
+        ENVIAR MENSAGEM
+      </button>
+
+      {sent && (
+        <p className="text-xs leading-relaxed text-white/50">
+          Mensagem registrada. Este site é demonstrativo; o envio não é encaminhado.
+        </p>
+      )}
+    </form>
+  );
+}
+
 function Contato() {
   return (
     <section id="contato" className="bg-graphite py-24 lg:py-32">
@@ -766,6 +851,13 @@ function Contato() {
           >
             FALAR PELO WHATSAPP
           </a>
+
+          <div className="mt-12">
+            <p className="mb-4 text-[11px] tracking-[0.28em] text-white/40">
+              OU ENVIE UMA MENSAGEM
+            </p>
+            <ContatoForm />
+          </div>
         </Reveal>
 
         <Reveal delay={120} className="space-y-8 border-t border-white/10 pt-10 lg:border-l lg:border-t-0 lg:pl-16 lg:pt-0">
@@ -792,11 +884,27 @@ function Contato() {
               contato@rafaelalmeida.adv.br
             </a>
           </div>
+
+          <div>
+            <p className="mb-4 text-[11px] tracking-[0.28em] text-white/40">REGIÃO DE ATENDIMENTO</p>
+            <div className="overflow-hidden border border-white/10">
+              <iframe
+                title="Mapa de Vitória da Conquista — BA"
+                src="https://www.google.com/maps?q=Vit%C3%B3ria%20da%20Conquista%2C%20BA&output=embed"
+                width="100%"
+                height="280"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                style={{ border: 0, filter: "grayscale(1) contrast(0.9)" }}
+              />
+            </div>
+          </div>
         </Reveal>
       </div>
     </section>
   );
 }
+
 
 function Footer() {
   return (
