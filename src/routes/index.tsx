@@ -982,12 +982,21 @@ function Footer() {
 
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-3 lg:px-10">
         <div>
+          <img
+            src={logoRA}
+            alt="Monograma RA — Rafael Almeida Advocacia"
+            width={1024}
+            height={1024}
+            loading="lazy"
+            className="mb-4 h-12 w-12 object-contain"
+          />
           <span className="block font-display text-xl tracking-[0.28em] text-white">
             RAFAEL ALMEIDA
           </span>
           <span className="mt-1 block text-[10px] tracking-[0.42em] text-terracotta-soft">
             ADVOCACIA
           </span>
+
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/50">
             Advocacia estratégica com atendimento personalizado.
           </p>
