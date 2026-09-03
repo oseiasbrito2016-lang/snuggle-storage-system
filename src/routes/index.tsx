@@ -1066,6 +1066,8 @@ function Home() {
         <Hero />
         <Numeros />
         <Sobre />
+        <Credenciais />
+
         <Atuacao />
         <CtaCaso />
         <Diferenciais />
