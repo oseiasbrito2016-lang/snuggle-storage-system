@@ -41,6 +41,12 @@ export const Route = createFileRoute("/")({
 
 const WHATSAPP = "https://wa.me/5577999999999";
 
+// Placeholders: substituir "#" pelos links reais das redes sociais.
+const SOCIAIS = [
+  { label: "Instagram", href: "#", icon: Instagram },
+  { label: "LinkedIn", href: "#", icon: Linkedin },
+];
+
 const NAV = [
   { label: "Início", href: "#inicio" },
   { label: "Sobre", href: "#sobre" },
