@@ -166,7 +166,8 @@
 
 @utility reveal {
   opacity: 0;
-  transform: translateY(28px);
+  transform: translate3d(0, 28px, 0);
+  will-change: opacity, transform;
   transition:
     opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
@@ -175,7 +176,14 @@
     opacity: 1;
     transform: none;
   }
+
+  /* libera a camada de composição depois da entrada */
+  &[data-done="true"] {
+    will-change: auto;
+    transition: none;
+  }
 }
+
 
 @keyframes cta-pulse {
   0%,

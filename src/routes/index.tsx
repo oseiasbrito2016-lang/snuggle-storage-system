@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Briefcase,
@@ -13,6 +13,8 @@ import {
   Compass,
   Handshake,
   Sparkles,
+  Instagram,
+  Linkedin,
 } from "lucide-react";
 import heroPhoto from "@/assets/rafael-hero.jpg";
 import sobrePhoto from "@/assets/rafael-sobre.jpg";
@@ -41,6 +43,12 @@ export const Route = createFileRoute("/")({
 
 const WHATSAPP = "https://wa.me/5577999999999";
 
+// Placeholders: substituir "#" pelos links reais das redes sociais.
+const SOCIAIS = [
+  { label: "Instagram", href: "#", icon: Instagram },
+  { label: "LinkedIn", href: "#", icon: Linkedin },
+];
+
 const NAV = [
   { label: "Início", href: "#inicio" },
   { label: "Sobre", href: "#sobre" },
@@ -52,6 +60,33 @@ const NAV = [
 
 /* ---------------- animation helpers ---------------- */
 
+/**
+ * Um único IntersectionObserver compartilhado por toda a página:
+ * evita criar dezenas de observers e dispara cada elemento uma só vez.
+ */
+type RevealCb = () => void;
+const revealCallbacks = new WeakMap<Element, RevealCb>();
+let sharedObserver: IntersectionObserver | null = null;
+
+function getObserver() {
+  if (typeof window === "undefined") return null;
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          sharedObserver?.unobserve(e.target);
+          const cb = revealCallbacks.get(e.target);
+          revealCallbacks.delete(e.target);
+          cb?.();
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
+    );
+  }
+  return sharedObserver;
+}
+
 function useInView<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
   const [visible, setVisible] = useState(false);
@@ -59,19 +94,17 @@ function useInView<T extends HTMLElement>() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setVisible(true);
-            obs.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" },
-    );
+    const obs = getObserver();
+    if (!obs) {
+      setVisible(true);
+      return;
+    }
+    revealCallbacks.set(el, () => setVisible(true));
     obs.observe(el);
-    return () => obs.disconnect();
+    return () => {
+      revealCallbacks.delete(el);
+      obs.unobserve(el);
+    };
   }, []);
 
   return { ref, visible };
@@ -87,17 +120,27 @@ function Reveal({
   className?: string;
 }) {
   const { ref, visible } = useInView<HTMLDivElement>();
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!visible || done) return;
+    const t = window.setTimeout(() => setDone(true), delay + 900);
+    return () => window.clearTimeout(t);
+  }, [visible, done, delay]);
+
   return (
     <div
       ref={ref}
       data-visible={visible}
-      style={{ transitionDelay: `${delay}ms` }}
+      data-done={done || undefined}
+      style={done ? undefined : { transitionDelay: `${delay}ms` }}
       className={`reveal ${className}`}
     >
       {children}
     </div>
   );
 }
+
 
 function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
   const { ref, visible } = useInView<HTMLSpanElement>();
@@ -743,6 +786,91 @@ function Frase() {
   );
 }
 
+function ContatoForm() {
+  const [sent, setSent] = useState(false);
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        setSent(true);
+      }}
+      className="space-y-5"
+    >
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="block">
+          <span className="text-[11px] tracking-[0.28em] text-white/40">NOME</span>
+          <input
+            required
+            name="nome"
+            type="text"
+            className="mt-2 w-full border-b border-white/15 bg-transparent py-3 text-white outline-none transition-colors focus:border-terracotta"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] tracking-[0.28em] text-white/40">E-MAIL</span>
+          <input
+            required
+            name="email"
+            type="email"
+            className="mt-2 w-full border-b border-white/15 bg-transparent py-3 text-white outline-none transition-colors focus:border-terracotta"
+          />
+        </label>
+      </div>
+      <label className="block">
+        <span className="text-[11px] tracking-[0.28em] text-white/40">TELEFONE (OPCIONAL)</span>
+        <input
+          name="telefone"
+          type="tel"
+          className="mt-2 w-full border-b border-white/15 bg-transparent py-3 text-white outline-none transition-colors focus:border-terracotta"
+        />
+      </label>
+      <label className="block">
+        <span className="text-[11px] tracking-[0.28em] text-white/40">
+          DESCRIÇÃO BREVE DO CASO
+        </span>
+        <textarea
+          required
+          name="mensagem"
+          rows={4}
+          className="mt-2 w-full resize-none border-b border-white/15 bg-transparent py-3 text-white outline-none transition-colors focus:border-terracotta"
+        />
+      </label>
+
+      <label className="flex items-start gap-3 pt-1">
+        <input
+          required
+          type="checkbox"
+          name="consentimento"
+          className="mt-1 h-4 w-4 flex-none accent-[var(--terracotta)]"
+        />
+        <span className="text-xs leading-relaxed text-white/50">
+          Concordo com o tratamento dos meus dados de acordo com a{" "}
+          <Link
+            to="/politica-de-privacidade"
+            className="text-terracotta-soft underline underline-offset-4"
+          >
+            Política de Privacidade
+          </Link>
+          , conforme a LGPD.
+        </span>
+      </label>
+
+      <button
+        type="submit"
+        className="w-full border border-terracotta px-10 py-4 text-[12px] tracking-[0.2em] text-terracotta-soft transition-colors duration-300 hover:bg-terracotta hover:text-white sm:w-auto"
+      >
+        ENVIAR MENSAGEM
+      </button>
+
+      {sent && (
+        <p className="text-xs leading-relaxed text-white/50">
+          Mensagem registrada. Este site é demonstrativo; o envio não é encaminhado.
+        </p>
+      )}
+    </form>
+  );
+}
+
 function Contato() {
   return (
     <section id="contato" className="bg-graphite py-24 lg:py-32">
@@ -766,6 +894,13 @@ function Contato() {
           >
             FALAR PELO WHATSAPP
           </a>
+
+          <div className="mt-12">
+            <p className="mb-4 text-[11px] tracking-[0.28em] text-white/40">
+              OU ENVIE UMA MENSAGEM
+            </p>
+            <ContatoForm />
+          </div>
         </Reveal>
 
         <Reveal delay={120} className="space-y-8 border-t border-white/10 pt-10 lg:border-l lg:border-t-0 lg:pl-16 lg:pt-0">
@@ -792,11 +927,27 @@ function Contato() {
               contato@rafaelalmeida.adv.br
             </a>
           </div>
+
+          <div>
+            <p className="mb-4 text-[11px] tracking-[0.28em] text-white/40">REGIÃO DE ATENDIMENTO</p>
+            <div className="overflow-hidden border border-white/10">
+              <iframe
+                title="Mapa de Vitória da Conquista — BA"
+                src="https://www.google.com/maps?q=Vit%C3%B3ria%20da%20Conquista%2C%20BA&output=embed"
+                width="100%"
+                height="280"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                style={{ border: 0, filter: "grayscale(1) contrast(0.9)" }}
+              />
+            </div>
+          </div>
         </Reveal>
       </div>
     </section>
   );
 }
+
 
 function Footer() {
   return (
@@ -843,12 +994,45 @@ function Footer() {
           ))}
         </nav>
 
-        <div className="flex flex-col justify-end gap-3 lg:items-end lg:text-right">
+        <div className="flex flex-col justify-end gap-4 lg:items-end lg:text-right">
+          <div>
+            <p className="text-[11px] tracking-[0.28em] text-white/40">CONTATO</p>
+            <p className="mt-2 text-sm text-white/70">(77) 99999-9999</p>
+            <a
+              href="mailto:contato@rafaelalmeida.adv.br"
+              className="block text-sm text-white/70 transition-colors hover:text-terracotta-soft"
+            >
+              contato@rafaelalmeida.adv.br
+            </a>
+          </div>
+
+          <div className="flex items-center gap-3 lg:justify-end">
+            {SOCIAIS.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                aria-label={s.label}
+                title={`${s.label} (link a definir)`}
+                className="flex h-10 w-10 items-center justify-center border border-terracotta/60 text-terracotta-soft transition-colors duration-300 hover:bg-terracotta hover:text-white"
+              >
+                <s.icon className="h-4 w-4" />
+              </a>
+            ))}
+          </div>
+
+          <Link
+            to="/politica-de-privacidade"
+            className="text-xs text-white/45 underline underline-offset-4 transition-colors hover:text-terracotta-soft"
+          >
+            Política de Privacidade
+          </Link>
+
           <p className="text-xs text-white/40">
             © 2026 Rafael Almeida Advocacia. Todos os direitos reservados.
           </p>
           <p className="text-[11px] text-white/25">Site demonstrativo — informações fictícias.</p>
         </div>
+
       </div>
     </footer>
   );
