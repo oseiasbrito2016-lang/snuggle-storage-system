@@ -951,12 +951,45 @@ function Footer() {
           ))}
         </nav>
 
-        <div className="flex flex-col justify-end gap-3 lg:items-end lg:text-right">
+        <div className="flex flex-col justify-end gap-4 lg:items-end lg:text-right">
+          <div>
+            <p className="text-[11px] tracking-[0.28em] text-white/40">CONTATO</p>
+            <p className="mt-2 text-sm text-white/70">(77) 99999-9999</p>
+            <a
+              href="mailto:contato@rafaelalmeida.adv.br"
+              className="block text-sm text-white/70 transition-colors hover:text-terracotta-soft"
+            >
+              contato@rafaelalmeida.adv.br
+            </a>
+          </div>
+
+          <div className="flex items-center gap-3 lg:justify-end">
+            {SOCIAIS.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                aria-label={s.label}
+                title={`${s.label} (link a definir)`}
+                className="flex h-10 w-10 items-center justify-center border border-terracotta/60 text-terracotta-soft transition-colors duration-300 hover:bg-terracotta hover:text-white"
+              >
+                <s.icon className="h-4 w-4" />
+              </a>
+            ))}
+          </div>
+
+          <Link
+            to="/politica-de-privacidade"
+            className="text-xs text-white/45 underline underline-offset-4 transition-colors hover:text-terracotta-soft"
+          >
+            Política de Privacidade
+          </Link>
+
           <p className="text-xs text-white/40">
             © 2026 Rafael Almeida Advocacia. Todos os direitos reservados.
           </p>
           <p className="text-[11px] text-white/25">Site demonstrativo — informações fictícias.</p>
         </div>
+
       </div>
     </footer>
   );
